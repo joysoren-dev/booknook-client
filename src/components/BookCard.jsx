@@ -1,19 +1,28 @@
+"use client";
+
 import Link from "next/link";
 import { FaStar, FaBookOpen } from "react-icons/fa";
+import { useState } from "react";
 
 export default function BookCard({ book }) {
   const { _id, title, author, category, rating, image, quantity } = book;
+  const [imgSrc, setImgSrc] = useState(
+    image ||
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80",
+  );
 
   return (
     <div className="group relative flex flex-col bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 overflow-hidden">
-      {/* Book Cover Image with Aspect Ratio */}
+      {/* Book Cover Image with Fallback */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100">
         <img
-          src={
-            image ||
-            "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80"
+          src={imgSrc}
+          alt={title || "Book Cover"}
+          onError={() =>
+            setImgSrc(
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80",
+            )
           }
-          alt={title}
           className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
         />
 
@@ -41,12 +50,14 @@ export default function BookCard({ book }) {
             {/* Availability Stock Pill */}
             <span
               className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
-                quantity > 0
+                Number(quantity) > 0
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                   : "bg-rose-50 text-rose-700 border border-rose-200/60"
               }`}
             >
-              {quantity > 0 ? `${quantity} Copies Left` : "Out of Stock"}
+              {Number(quantity) > 0
+                ? `${quantity} Copies Left`
+                : "Out of Stock"}
             </span>
           </div>
         </div>
