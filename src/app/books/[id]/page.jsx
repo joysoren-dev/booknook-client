@@ -73,6 +73,17 @@ export default function BookDetailsPage({ params }) {
 
     setBorrowing(true);
     try {
+      // Ensure token exists before sending
+      if (!localStorage.getItem("access-token") && session?.user?.email) {
+        const tokenRes = await api.post("/jwt", {
+          email: session.user.email,
+          name: session.user.name,
+        });
+        if (tokenRes.data?.token) {
+          localStorage.setItem("access-token", tokenRes.data.token);
+        }
+      }
+
       const payload = {
         bookId: book._id,
         bookTitle: book.title,
@@ -88,19 +99,21 @@ export default function BookDetailsPage({ params }) {
 
       if (res.status === 201 || res.status === 200) {
         toast.success(`Successfully borrowed "${book.title}"!`);
-        // Update local available stock count
-        const currentCopies = Number(book.copies ?? book.quantity ?? 1);
+        // Decrement local copies
         setBook((prev) => ({
           ...prev,
-          copies: Math.max(0, currentCopies - 1),
-          quantity: Math.max(0, currentCopies - 1),
+          totalCopies: Math.max(
+            0,
+            Number(prev.totalCopies ?? prev.copies ?? 1) - 1,
+          ),
+          copies: Math.max(0, Number(prev.totalCopies ?? prev.copies ?? 1) - 1),
         }));
         setModalOpen(false);
       }
     } catch (err) {
       const errMsg =
         err.response?.data?.message ||
-        "You have already borrowed this book or it is out of stock.";
+        "Failed to borrow book. You may have already borrowed it.";
       toast.error(errMsg);
     } finally {
       setBorrowing(false);
@@ -136,13 +149,14 @@ export default function BookDetailsPage({ params }) {
     );
   }
 
-  // Handle both copies and quantity fields with fallback to 1
-  const availableCopies = Number(book.copies ?? book.quantity ?? 1);
+  // Check totalCopies first, then copies, then fallback to 1
+  const availableCopies = Number(
+    book.totalCopies ?? book.copies ?? book.quantity ?? 0,
+  );
   const isOutOfStock = availableCopies <= 0;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      {/* Back button */}
       <Link
         href="/books"
         className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500 hover:text-indigo-600 mb-8 transition"
@@ -151,7 +165,6 @@ export default function BookDetailsPage({ params }) {
       </Link>
 
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 p-6 sm:p-10">
-        {/* Left Column: Book Cover */}
         <div className="md:col-span-5 flex flex-col items-center">
           <div className="relative w-full max-w-[320px] aspect-[3/4] rounded-2xl overflow-hidden bg-slate-100 shadow-xl border border-slate-200/60">
             <img
@@ -166,7 +179,6 @@ export default function BookDetailsPage({ params }) {
             />
           </div>
 
-          {/* Quick status pill */}
           <div className="mt-5 w-full max-w-[320px] flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
             <span className="font-semibold text-slate-600 flex items-center gap-1.5">
               <FaLayerGroup className="text-indigo-500" /> Available Stock:
@@ -185,7 +197,6 @@ export default function BookDetailsPage({ params }) {
           </div>
         </div>
 
-        {/* Right Column: Book Details & Actions */}
         <div className="md:col-span-7 flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className="flex items-center gap-2 flex-wrap">
@@ -218,7 +229,6 @@ export default function BookDetailsPage({ params }) {
             </div>
           </div>
 
-          {/* Action Area */}
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-4">
             <button
               onClick={() => setModalOpen(true)}
@@ -238,7 +248,6 @@ export default function BookDetailsPage({ params }) {
         </div>
       </div>
 
-      {/* Borrow Confirmation Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5 relative">
