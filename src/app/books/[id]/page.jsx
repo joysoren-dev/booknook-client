@@ -88,10 +88,12 @@ export default function BookDetailsPage({ params }) {
 
       if (res.status === 201 || res.status === 200) {
         toast.success(`Successfully borrowed "${book.title}"!`);
-        // Update local available copies count
+        // Update local available stock count
+        const currentCopies = Number(book.copies ?? book.quantity ?? 1);
         setBook((prev) => ({
           ...prev,
-          copies: Math.max(0, (prev.copies || 1) - 1),
+          copies: Math.max(0, currentCopies - 1),
+          quantity: Math.max(0, currentCopies - 1),
         }));
         setModalOpen(false);
       }
@@ -108,7 +110,7 @@ export default function BookDetailsPage({ params }) {
   if (authPending || loading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 rounded-full border-3 border-indigo-600 border-t-transparent animate-spin" />
+        <div className="w-10 h-10 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
         <p className="text-xs sm:text-sm text-slate-500 font-medium">
           Loading book details...
         </p>
@@ -134,10 +136,12 @@ export default function BookDetailsPage({ params }) {
     );
   }
 
-  const isOutOfStock = Number(book.copies) <= 0;
+  // Handle both copies and quantity fields with fallback to 1
+  const availableCopies = Number(book.copies ?? book.quantity ?? 1);
+  const isOutOfStock = availableCopies <= 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       {/* Back button */}
       <Link
         href="/books"
@@ -168,7 +172,7 @@ export default function BookDetailsPage({ params }) {
               <FaLayerGroup className="text-indigo-500" /> Available Stock:
             </span>
             <span
-              className={`font-black px-2.5 py-0.5 rounded-full ${
+              className={`font-bold px-3 py-1 rounded-full text-xs ${
                 isOutOfStock
                   ? "bg-rose-100 text-rose-700"
                   : "bg-emerald-100 text-emerald-700"
@@ -176,7 +180,7 @@ export default function BookDetailsPage({ params }) {
             >
               {isOutOfStock
                 ? "0 Copies (Out of Stock)"
-                : `${book.copies} Copies`}
+                : `${availableCopies} Copies`}
             </span>
           </div>
         </div>
@@ -209,7 +213,7 @@ export default function BookDetailsPage({ params }) {
               </h2>
               <p className="text-sm text-slate-600 leading-relaxed font-normal whitespace-pre-line">
                 {book.description ||
-                  "No description provided for this catalog volume."}
+                  "A timeless classic exploring deep literary themes and human experiences."}
               </p>
             </div>
           </div>
@@ -238,7 +242,6 @@ export default function BookDetailsPage({ params }) {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5 relative">
-            {/* Close modal */}
             <button
               onClick={() => setModalOpen(false)}
               className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-1"
@@ -259,7 +262,6 @@ export default function BookDetailsPage({ params }) {
             </div>
 
             <form onSubmit={handleConfirmBorrow} className="space-y-4">
-              {/* Book Title (Read-only) */}
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Book Title
@@ -272,7 +274,6 @@ export default function BookDetailsPage({ params }) {
                 />
               </div>
 
-              {/* Borrower Name (Read-only) */}
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Borrower Name
@@ -288,7 +289,6 @@ export default function BookDetailsPage({ params }) {
                 </div>
               </div>
 
-              {/* Borrower Email (Read-only) */}
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Borrower Email
@@ -304,7 +304,6 @@ export default function BookDetailsPage({ params }) {
                 </div>
               </div>
 
-              {/* Expected Return Date */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Expected Return Date <span className="text-rose-500">*</span>
