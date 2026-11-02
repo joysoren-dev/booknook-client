@@ -15,6 +15,7 @@ import {
   FaLayerGroup,
   FaTimes,
   FaCheckCircle,
+  FaUserEdit,
 } from "react-icons/fa";
 
 export default function MyBooksPage() {
@@ -145,7 +146,7 @@ export default function MyBooksPage() {
           </Link>
         </div>
       ) : (
-        /* Books List Grid */
+        /* Refined Books List Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           {books.map((book) => {
             const copies = Number(
@@ -155,7 +156,7 @@ export default function MyBooksPage() {
             return (
               <div
                 key={book._id}
-                className="w-full bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between gap-5"
+                className="w-full bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 p-6 flex flex-col justify-between gap-5"
               >
                 <div className="flex items-start gap-5">
                   <div className="w-24 sm:w-28 h-36 flex-shrink-0 bg-slate-100 rounded-xl overflow-hidden shadow-sm border border-slate-200">
@@ -175,36 +176,39 @@ export default function MyBooksPage() {
                         <FaTag className="text-[10px]" />{" "}
                         {book.category || "General"}
                       </span>
-                      <div className="flex items-center gap-1 text-amber-500 text-xs font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
-                        <FaStar className="text-[10px]" />
+                      <div className="flex items-center gap-1 text-amber-500 text-xs font-bold bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200/60">
+                        <FaStar className="text-[11px]" />
                         <span>{book.rating || "4.5"}</span>
                       </div>
                     </div>
 
                     <h3
-                      className="font-extrabold text-slate-900 text-lg sm:text-xl leading-snug line-clamp-2"
+                      className="font-extrabold text-slate-900 text-lg leading-snug line-clamp-2"
                       title={book.title}
                     >
                       {book.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      By {book.author || "Unknown Author"}
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium flex items-center gap-1.5">
+                      <FaUserEdit className="text-indigo-500" />
+                      <span className="truncate">
+                        By {book.author || "Unknown Author"}
+                      </span>
                     </p>
                   </div>
                 </div>
 
-                {/* Bottom Bar with Stock and Edit Button */}
+                {/* Bottom Stock & Action Bar */}
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs flex-shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm flex-shrink-0">
                       <FaLayerGroup />
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                      <span className="text-[11px] uppercase font-bold text-slate-400 block tracking-wider">
                         Available Stock
                       </span>
-                      <span className="text-xs sm:text-sm font-extrabold text-slate-800">
+                      <span className="text-xs sm:text-sm font-black text-slate-800">
                         {copies} Copies
                       </span>
                     </div>
