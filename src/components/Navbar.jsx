@@ -9,6 +9,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaUser,
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -17,8 +18,8 @@ export default function Navbar() {
   const { data: session, isPending } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
-  // Requirements: Public links + Logged-in only private links (Add Book, My Books, My Borrows)
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "All Books", href: "/books" },
@@ -32,7 +33,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link
@@ -71,41 +72,55 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center focus:outline-none"
+                className="flex items-center gap-2 focus:outline-none p-1 rounded-full hover:ring-2 hover:ring-indigo-300 transition"
               >
-                {session.user?.image ? (
+                {session.user?.image && !imgError ? (
                   <img
                     src={session.user.image}
-                    alt={session.user.name || "User"}
-                    className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500"
+                    alt={session.user.name || "User Avatar"}
+                    referrerPolicy="no-referrer"
+                    onError={() => setImgError(true)}
+                    className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500 shadow-sm"
                   />
                 ) : (
-                  <FaUserCircle className="text-3xl text-gray-500" />
+                  <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm ring-2 ring-indigo-500 shadow-sm">
+                    {session.user?.name
+                      ? session.user.name.charAt(0).toUpperCase()
+                      : "U"}
+                  </div>
                 )}
               </button>
 
               {/* Requirement: Dropdown with user name, My Profile, and Logout */}
               {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-xs text-gray-400">Signed in as</p>
-                    <p className="text-sm font-bold text-gray-800 truncate">
+                <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 py-2.5 border-b border-slate-100">
+                    <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                      Signed in as
+                    </p>
+                    <p className="text-sm font-bold text-slate-800 truncate mt-0.5">
                       {session.user?.name || "Reader"}
                     </p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {session.user?.email}
+                    </p>
                   </div>
+
                   <Link
                     href="/profile"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition"
                   >
-                    My Profile
+                    <FaUser className="text-xs text-slate-400" />
+                    <span>My Profile</span>
                   </Link>
+
                   <button
                     onClick={() => {
                       signOut();
                       setProfileDropdownOpen(false);
                     }}
-                    className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    className="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-red-600 hover:bg-red-50 transition"
                   >
                     <FaSignOutAlt className="text-xs" />
                     <span>Logout</span>
@@ -114,7 +129,6 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            // Requirement: When not logged in, show Login and Register buttons
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
@@ -163,13 +177,13 @@ export default function Navbar() {
           <div className="pt-3 border-t border-gray-100">
             {session ? (
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-gray-800">
+                <p className="text-sm font-bold text-gray-800">
                   {session.user?.name}
                 </p>
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-indigo-600"
+                  className="block text-sm text-indigo-600 font-medium"
                 >
                   My Profile
                 </Link>
