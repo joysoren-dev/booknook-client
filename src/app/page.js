@@ -1,13 +1,15 @@
 import HeroBanner from "@/components/HeroBanner";
-import CategoryShowcase from '@/components/CategoryShowcase';
-import FeaturedBooks from "@/components/FeaturedBooks";
+import CategoryShowcase from "@/components/CategoryShowcase";
+import NewArrivals from "@/components/NewArrivals";
+import HomeExtras from "@/components/HomeExtras";
 
 export default function HomePage() {
   return (
-    <div>
+    <div className="space-y-4">
       <HeroBanner />
       <CategoryShowcase />
-      <FeaturedBooks />
+      <NewArrivals />
+      <HomeExtras />
     </div>
   );
 }
