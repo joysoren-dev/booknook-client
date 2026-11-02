@@ -2,48 +2,60 @@
 
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
-import { FaBookOpen, FaArrowRight } from "react-icons/fa";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import {
+  FaBookOpen,
+  FaArrowRight,
+  FaCompass,
+  FaFeatherAlt,
+} from "react-icons/fa";
 
-// Swiper core styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import "swiper/css/effect-fade";
 
 export default function HeroBanner() {
   const slides = [
     {
       badge: "Curated Catalog",
+      icon: <FaBookOpen className="text-xs" />,
       title: "Discover, Borrow & Share Your Favorite Books",
       desc: "Access thousands of titles across literature, science, history, and arts. Your modern neighborhood library is just a click away.",
-      bgGradient: "from-slate-950 via-indigo-950 to-slate-900",
-      accentColor: "indigo",
+      image:
+        "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1920&q=80",
+      badgeClass: "text-indigo-300 border-indigo-400/30 bg-indigo-500/20",
+      btnClass: "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/30",
     },
     {
-      badge: "Limitless Learning",
-      title: "Expand Your Mind With Science & Tech Archives",
-      desc: "Deep-dive into computing, physics, philosophy, and cutting-edge research guides. Borrow and track your reading journey seamlessly.",
-      bgGradient: "from-slate-950 via-sky-950 to-slate-900",
-      accentColor: "sky",
+      badge: "Endless Knowledge",
+      icon: <FaCompass className="text-xs" />,
+      title: "Expand Your Horizon With Science & Tech Archives",
+      desc: "Deep-dive into computing, physics, philosophy, and cutting-edge research guides. Track and borrow titles seamlessly.",
+      // Rock-solid aesthetic dark library shelves image
+      image:
+        "https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=1920&q=80",
+      badgeClass: "text-sky-300 border-sky-400/30 bg-sky-500/20",
+      btnClass: "bg-sky-600 hover:bg-sky-500 shadow-sky-600/30",
     },
     {
       badge: "Community Circle",
+      icon: <FaFeatherAlt className="text-xs" />,
       title: "Contribute Books & Connect With Passionate Readers",
-      desc: "Join a thriving community of book lovers. Share your personal collection, read genuine reviews, and return books easily.",
-      bgGradient: "from-slate-950 via-violet-950 to-slate-900",
-      accentColor: "violet",
+      desc: "Join a thriving community of book lovers. Share your personal collection, read genuine reviews, and manage your returns smoothly.",
+      image:
+        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1920&q=80",
+      badgeClass: "text-purple-300 border-purple-400/30 bg-purple-500/20",
+      btnClass: "bg-purple-600 hover:bg-purple-500 shadow-purple-600/30",
     },
   ];
 
   return (
     <div className="relative w-full overflow-hidden bg-slate-950 text-white">
       <Swiper
-        modules={[Autoplay, Pagination, Navigation, EffectFade]}
-        effect="fade"
+        modules={[Autoplay, Pagination, Navigation]}
         speed={800}
         autoplay={{
-          delay: 4500,
+          delay: 3500,
           disableOnInteraction: false,
         }}
         pagination={{
@@ -53,34 +65,39 @@ export default function HeroBanner() {
         }}
         navigation={true}
         loop={true}
-        className="w-full min-h-[460px] sm:min-h-[520px]"
+        className="w-full min-h-[500px] sm:min-h-[560px]"
       >
         {slides.map((slide, idx) => (
           <SwiperSlide key={idx}>
-            <div
-              className={`w-full min-h-[460px] sm:min-h-[520px] bg-gradient-to-br ${slide.bgGradient} flex items-center justify-center relative px-6 py-20`}
-            >
-              {/* Subtle background glow */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
+            <div className="relative w-full min-h-[500px] sm:min-h-[560px] flex items-center justify-center px-6 py-24 overflow-hidden">
+              {/* Reliable Background Image with Smooth Scaling */}
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
+                style={{ backgroundImage: `url(${slide.image})` }}
+              />
+              <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[1px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
 
+              {/* Slide Content */}
               <div className="max-w-3xl mx-auto text-center relative z-10 space-y-6">
-                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-white/10 border border-white/20 text-indigo-300">
-                  <FaBookOpen className="text-xs" /> {slide.badge}
+                <span
+                  className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider uppercase border backdrop-blur-md ${slide.badgeClass}`}
+                >
+                  {slide.icon} {slide.badge}
                 </span>
 
-                <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight sm:leading-tight text-white drop-shadow-sm">
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-tight text-white drop-shadow-md">
                   {slide.title}
                 </h1>
 
-                <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-sm">
                   {slide.desc}
                 </p>
 
-                {/* Requirement: "Browse Books" button that goes to the All Books page */}
                 <div className="pt-2">
                   <Link
                     href="/books"
-                    className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-0.5"
+                    className={`inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl ${slide.btnClass} text-white text-sm font-bold shadow-lg transition-all duration-200 hover:-translate-y-0.5`}
                   >
                     <span>Browse Books</span>
                     <FaArrowRight className="text-xs" />
