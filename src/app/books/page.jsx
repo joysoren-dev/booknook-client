@@ -12,6 +12,9 @@ import {
   FaFilter,
 } from "react-icons/fa";
 
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&q=80";
+
 export default function BooksCatalogPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +23,7 @@ export default function BooksCatalogPage() {
   const [filterAvailable, setFilterAvailable] = useState(false);
 
   useEffect(() => {
+    document.title = "BookNook | All Books";
     const fetchBooks = async () => {
       try {
         setLoading(true);
@@ -146,15 +150,22 @@ export default function BooksCatalogPage() {
                   <div className="relative aspect-[3/4] w-full bg-slate-100 overflow-hidden border-b border-slate-100">
                     <img
                       src={
-                        book.image ||
-                        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80"
+                        book.image && book.image.trim() !== ""
+                          ? book.image
+                          : FALLBACK_IMAGE
                       }
-                      alt={book.title}
+                      alt={book.title || "Book Cover"}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-amber-600 flex items-center gap-1 shadow-sm">
                       <FaStar className="text-amber-400 text-[10px]" />
-                      <span>{book.rating || "4.5"}</span>
+                      <span>
+                        {book.rating ? Number(book.rating).toFixed(1) : "4.5"}
+                      </span>
                     </div>
                   </div>
 
@@ -164,13 +175,17 @@ export default function BooksCatalogPage() {
                       {book.category || "General"}
                     </span>
                     <h3
-                      className="font-black text-slate-900 text-sm sm:text-base leading-snug line-clamp-2"
+                      className="font-black text-slate-900 text-sm sm:text-base leading-snug line-clamp-1"
                       title={book.title}
                     >
                       {book.title}
                     </h3>
                     <p className="text-xs text-slate-500 font-medium truncate">
                       By {book.author || "Unknown Author"}
+                    </p>
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                      {book.description ||
+                        "Explore an enriching literary journey filled with captivating insights and engaging perspectives."}
                     </p>
                   </div>
                 </div>
