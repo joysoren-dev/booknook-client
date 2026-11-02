@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { FaAtom, FaScroll, FaTheaterMasks, FaBrain } from "react-icons/fa";
+import {
+  FaAtom,
+  FaScroll,
+  FaTheaterMasks,
+  FaBrain,
+  FaChild,
+  FaLightbulb,
+} from "react-icons/fa";
 
 export default function CategoryShowcase() {
   const categories = [
@@ -39,6 +46,24 @@ export default function CategoryShowcase() {
       count: "31 Titles",
       bgGradient: "from-rose-50 to-rose-100/50",
     },
+    {
+      name: "Kids & Young Readers",
+      slug: "Kids",
+      description:
+        "Illustrated adventures, bedtime folk tales, and early learning.",
+      icon: <FaChild className="text-3xl text-emerald-500" />,
+      count: "24 Titles",
+      bgGradient: "from-emerald-50 to-emerald-100/50",
+    },
+    {
+      name: "Self-Help & Growth",
+      slug: "Self-Help",
+      description:
+        "Mindset building, productivity habits, and career resilience.",
+      icon: <FaLightbulb className="text-3xl text-purple-500" />,
+      count: "35 Titles",
+      bgGradient: "from-purple-50 to-purple-100/50",
+    },
   ];
 
   return (
@@ -46,18 +71,18 @@ export default function CategoryShowcase() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
-            Genres
+            Curated Genres
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">
             Browse by Popular Category
           </h2>
           <p className="text-sm text-slate-500 mt-2">
-            Filter our comprehensive library collection by your favorite
-            literary genre.
+            Select a genre to filter our comprehensive library archive and find
+            your next read.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => (
             <Link
               key={cat.slug}
