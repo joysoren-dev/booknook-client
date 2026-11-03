@@ -6,7 +6,7 @@
 
 ## 🌐 Live Application & Repositories
 
-- **Live URL:** [https://booknook-client-git-main-joysoren4-3057.vercel.app/](https://booknook-client-git-main-joysoren4-3057.vercel.app/)
+- **Live URL:** [https://booknook-client-gamma.vercel.app/](https://booknook-client-gamma.vercel.app/)
 - **Client Repository:** [https://github.com/joysoren-dev/booknook-client](https://github.com/joysoren-dev/booknook-client)
 - **Server Repository:** [https://github.com/joysoren-dev/booknook-server](https://github.com/joysoren-dev/booknook-server)
 
