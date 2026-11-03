@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 BookNook – A Small Online Library
 
-## Getting Started
+**BookNook** is a modern, responsive full-stack online library management application where readers can explore diverse genres, borrow books, manage their personal borrows, and contribute their own titles to the collective catalog.
 
-First, run the development server:
+---
 
-```bash
+## 🌐 Live Application & Repositories
+
+- **Live URL:** [https://booknook-client-git-main-joysoren4-3057.vercel.app/](https://booknook-client-git-main-joysoren4-3057.vercel.app/)
+- **Client Repository:** [https://github.com/joysoren-dev/booknook-client](https://github.com/joysoren-dev/booknook-client)
+- **Server Repository:** [https://github.com/joysoren-dev/booknook-server](https://github.com/joysoren-dev/booknook-server)
+
+---
+
+## ✨ Key Features
+
+- **Interactive Book Exploration & Filtering:** Browse the complete book catalog with real-time title/author searching, category-based filtering, and stock availability toggles.
+- **Dynamic Swiper Carousel & Latest Arrivals:** Features an engaging hero banner powered by Swiper.js and a dynamically rendered "New Arrivals" showcase presenting the 6 latest added books.
+- **Role-Aware Authentication System:** Secure email/password login and Google OAuth integration powered by BetterAuth with automatic private route protection and redirection.
+- **Real-Time Borrow & Return Flow:** Registered users can borrow books with automated quantity updates, prevention of duplicate active borrows, and smooth returns via the personal dashboard.
+- **User Contribution & Catalog Management:** Authenticated readers can add new books, update existing book details, and safely delete contributed books using custom confirmation modals.
+- **Intuitive UX & Instant Feedback:** Fully responsive mobile-friendly interface built with Tailwind CSS, custom loading spinners, custom 404 error page, and instant toast notifications for all CRUD actions.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend:** Next.js (App Router), React, Tailwind CSS, React Icons, Swiper.js, React Hot Toast, Axios
+- **Authentication:** BetterAuth, MongoDB Adapter
+- **Backend API:** Node.js, Express.js, JSON Web Tokens (JWT)
+- **Database:** MongoDB Native Driver
+- **Deployment:** Vercel (Client & Server)
+
+---
+
+## 🚀 Getting Started Locally
+
+### 1. Clone the repository
+git clone [https://github.com/joysoren-dev/booknook-client.git](https://github.com/joysoren-dev/booknook-client.git)
+cd booknook-client
+
+### 2. Install dependencies
+npm install
+
+### 3. Setup environment variables
+Create a `.env.local` file in the root directory:
+NEXT_PUBLIC_API_URL=http://localhost:5000
+BETTER_AUTH_SECRET=your_auth_secret
+BETTER_AUTH_URL=http://localhost:3000
+
+### 4. Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open http://localhost:3000 in your browser to explore the project.

@@ -105,7 +105,7 @@ export default function BooksCatalogPage() {
 
           <button
             onClick={() => setFilterAvailable(!filterAvailable)}
-            className={`px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition flex items-center gap-2 cursor-pointer ${
               filterAvailable
                 ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                 : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
@@ -117,7 +117,7 @@ export default function BooksCatalogPage() {
         </div>
       </div>
 
-      {/* Catalog Grid */}
+      {/* Catalog Grid (3 cards per row on desktop as requested) */}
       {loading ? (
         <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3">
           <div className="w-10 h-10 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
@@ -134,7 +134,7 @@ export default function BooksCatalogPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBooks.map((book) => {
             const copies = Number(
               book.totalCopies ?? book.copies ?? book.quantity ?? 0,
@@ -169,13 +169,13 @@ export default function BooksCatalogPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 space-y-2">
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">
+                  <div className="p-5 space-y-2">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
                       <FaTag className="text-[8px]" />{" "}
                       {book.category || "General"}
                     </span>
                     <h3
-                      className="font-black text-slate-900 text-sm sm:text-base leading-snug line-clamp-1"
+                      className="font-black text-slate-900 text-lg leading-snug line-clamp-1"
                       title={book.title}
                     >
                       {book.title}
@@ -190,9 +190,9 @@ export default function BooksCatalogPage() {
                   </div>
                 </div>
 
-                <div className="p-4 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <div className="p-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span
-                    className={`font-bold text-[11px] px-2 py-0.5 rounded-md ${
+                    className={`font-bold text-xs px-2.5 py-1 rounded-md ${
                       isOut
                         ? "bg-rose-50 text-rose-600"
                         : "bg-emerald-50 text-emerald-700"
@@ -203,10 +203,10 @@ export default function BooksCatalogPage() {
 
                   <Link
                     href={`/books/${book._id}`}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white text-xs font-bold transition"
                   >
-                    <span>Details</span>
-                    <FaArrowRight className="text-[10px]" />
+                    <span>View Details</span>
+                    <FaArrowRight className="text-[9px]" />
                   </Link>
                 </div>
               </div>
