@@ -72,7 +72,9 @@ export default function RegisterPage() {
         toast.error(res.error.message || "Registration failed.");
       } else {
         toast.success("Registration successful! Please log in.");
-        router.push("/login");
+        setTimeout(() => {
+          router.push("/login");
+        }, 500);
       }
     } catch (err) {
       setErrorMsg(err.message || "Something went wrong.");

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 import {
   FaBookOpen,
-  FaUserCircle,
   FaSignOutAlt,
   FaBars,
   FaTimes,
@@ -19,6 +19,20 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success("Logged out successfully!");
+      setProfileDropdownOpen(false);
+      setMobileMenuOpen(false);
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 600);
+    } catch (error) {
+      toast.error("Failed to log out");
+    }
+  };
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -72,7 +86,7 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 focus:outline-none p-1 rounded-full hover:ring-2 hover:ring-indigo-300 transition"
+                className="flex items-center gap-2 focus:outline-none p-1 rounded-full hover:ring-2 hover:ring-indigo-300 transition cursor-pointer"
               >
                 {session.user?.image && !imgError ? (
                   <img
@@ -91,7 +105,6 @@ export default function Navbar() {
                 )}
               </button>
 
-              {/* Requirement: Dropdown with user name, My Profile, and Logout */}
               {profileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-4 py-2.5 border-b border-slate-100">
@@ -116,11 +129,8 @@ export default function Navbar() {
                   </Link>
 
                   <button
-                    onClick={() => {
-                      signOut();
-                      setProfileDropdownOpen(false);
-                    }}
-                    className="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-red-600 hover:bg-red-50 transition"
+                    onClick={handleLogout}
+                    className="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-red-600 hover:bg-red-50 transition cursor-pointer"
                   >
                     <FaSignOutAlt className="text-xs" />
                     <span>Logout</span>
@@ -150,7 +160,7 @@ export default function Navbar() {
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-gray-700 hover:text-indigo-600 p-2"
+            className="text-gray-700 hover:text-indigo-600 p-2 cursor-pointer"
           >
             {mobileMenuOpen ? (
               <FaTimes className="text-xl" />
@@ -188,11 +198,8 @@ export default function Navbar() {
                   My Profile
                 </Link>
                 <button
-                  onClick={() => {
-                    signOut();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-sm text-red-600 flex items-center gap-1.5"
+                  onClick={handleLogout}
+                  className="text-sm text-red-600 flex items-center gap-1.5 cursor-pointer"
                 >
                   <FaSignOutAlt /> Logout
                 </button>

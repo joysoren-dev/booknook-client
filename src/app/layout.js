@@ -2,7 +2,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TokenSync from "@/components/TokenSync";
-import { Toaster } from "react-hot-toast";
+import ToastProvider from "@/components/ToastProvider";
 
 export const metadata = {
   title: "BookNook | A Modern Online Library",
@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <Toaster position="top-right" />
+        <ToastProvider />
       </body>
     </html>
   );
