@@ -85,8 +85,7 @@ export default function AddBookPage() {
       const res = await api.post("/books", payload);
       if (res.status === 201 || res.status === 200) {
         toast.success(`"${formData.title}" added successfully!`);
-        // Navbar onujayi /all-books e redirect hocche
-        router.push("/all-books");
+        router.push("/books");
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to add book.";
