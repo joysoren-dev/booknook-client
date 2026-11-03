@@ -85,7 +85,9 @@ export default function AddBookPage() {
       const res = await api.post("/books", payload);
       if (res.status === 201 || res.status === 200) {
         toast.success(`"${formData.title}" added successfully!`);
-        router.push("/books");
+        setTimeout(() => {
+          router.push("/books");
+        }, 600);
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to add book.";
@@ -106,7 +108,6 @@ export default function AddBookPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-10">
-        {/* Header section with proper spacing */}
         <div className="mb-8 border-b border-slate-100 pb-5">
           <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
             Catalog Management
@@ -136,7 +137,7 @@ export default function AddBookPage() {
                   placeholder="e.g. To Kill a Mockingbird"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
                 />
               </div>
             </div>
@@ -155,7 +156,7 @@ export default function AddBookPage() {
                   placeholder="e.g. Harper Lee"
                   value={formData.author}
                   onChange={handleChange}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
                 />
               </div>
             </div>
@@ -197,7 +198,7 @@ export default function AddBookPage() {
                   name="totalCopies"
                   value={formData.totalCopies}
                   onChange={handleChange}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
                 />
               </div>
             </div>
@@ -217,7 +218,7 @@ export default function AddBookPage() {
                   name="rating"
                   value={formData.rating}
                   onChange={handleChange}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
                 />
               </div>
             </div>
@@ -235,7 +236,7 @@ export default function AddBookPage() {
                   placeholder="https://images.unsplash.com/photo-..."
                   value={formData.image}
                   onChange={handleChange}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
                 />
               </div>
             </div>
@@ -254,7 +255,7 @@ export default function AddBookPage() {
                 placeholder="Write a brief overview of this book..."
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
               />
             </div>
           </div>
@@ -264,7 +265,7 @@ export default function AddBookPage() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md transition disabled:opacity-50 cursor-pointer"
             >
               <FaPlusCircle className="text-xs" />
               <span>{loading ? "Adding Book..." : "Add Book"}</span>

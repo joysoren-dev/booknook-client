@@ -24,7 +24,7 @@ export default function MyBorrowsPage() {
   const [borrows, setBorrows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [returningId, setReturningId] = useState(null);
-  const [targetBook, setTargetBook] = useState(null); // Custom modal state
+  const [targetBook, setTargetBook] = useState(null);
 
   // Private route validation
   useEffect(() => {
@@ -58,13 +58,26 @@ export default function MyBorrowsPage() {
   const confirmReturnAction = async () => {
     if (!targetBook) return;
 
-    setReturningId(targetBook._id);
+    const bookToReturn = targetBook;
+    setReturningId(bookToReturn._id);
+
     try {
-      const res = await api.delete(`/borrows/${targetBook._id}`);
+      // Ensure token exists
+      if (!localStorage.getItem("access-token") && session?.user?.email) {
+        const tokenRes = await api.post("/jwt", {
+          email: session.user.email,
+          name: session.user.name,
+        });
+        if (tokenRes.data?.token) {
+          localStorage.setItem("access-token", tokenRes.data.token);
+        }
+      }
+
+      const res = await api.delete(`/borrows/${bookToReturn._id}`);
       if (res.status === 200) {
-        toast.success(`"${targetBook.bookTitle}" returned successfully!`);
+        toast.success(`"${bookToReturn.bookTitle}" returned successfully!`);
         setBorrows((prev) =>
-          prev.filter((item) => item._id !== targetBook._id),
+          prev.filter((item) => item._id !== bookToReturn._id),
         );
         setTargetBook(null);
       }
@@ -187,7 +200,7 @@ export default function MyBorrowsPage() {
                 <button
                   onClick={() => setTargetBook(item)}
                   disabled={returningId === item._id}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs sm:text-sm font-bold shadow-sm transition disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs sm:text-sm font-bold shadow-sm transition disabled:opacity-50 cursor-pointer"
                 >
                   <FaUndoAlt className="text-xs" />
                   <span>Return Book</span>
@@ -204,7 +217,7 @@ export default function MyBorrowsPage() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center relative">
             <button
               onClick={() => setTargetBook(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1"
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
             >
               <FaTimes className="text-base" />
             </button>
@@ -228,7 +241,7 @@ export default function MyBorrowsPage() {
               <button
                 type="button"
                 onClick={() => setTargetBook(null)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -236,7 +249,7 @@ export default function MyBorrowsPage() {
                 type="button"
                 onClick={confirmReturnAction}
                 disabled={returningId === targetBook._id}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition disabled:opacity-50"
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition disabled:opacity-50 cursor-pointer"
               >
                 {returningId === targetBook._id
                   ? "Returning..."

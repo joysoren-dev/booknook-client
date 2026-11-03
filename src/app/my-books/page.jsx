@@ -16,7 +16,20 @@ import {
   FaTimes,
   FaCheckCircle,
   FaUserEdit,
+  FaTrashAlt,
+  FaExclamationTriangle,
 } from "react-icons/fa";
+
+const CATEGORIES = [
+  "Fiction",
+  "Non-Fiction",
+  "Science & Technology",
+  "History",
+  "Philosophy",
+  "Fantasy",
+  "Business",
+  "Self-Help",
+];
 
 export default function MyBooksPage() {
   const router = useRouter();
@@ -25,7 +38,9 @@ export default function MyBooksPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingBook, setEditingBook] = useState(null);
+  const [deletingBook, setDeletingBook] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Private route check
   useEffect(() => {
@@ -55,12 +70,27 @@ export default function MyBooksPage() {
     }
   }, [session]);
 
+  // Helper to ensure JWT Token is set
+  const ensureToken = async () => {
+    if (!localStorage.getItem("access-token") && session?.user?.email) {
+      const tokenRes = await api.post("/jwt", {
+        email: session.user.email,
+        name: session.user.name,
+      });
+      if (tokenRes.data?.token) {
+        localStorage.setItem("access-token", tokenRes.data.token);
+      }
+    }
+  };
+
   // Handle Edit submission
   const handleUpdateBook = async (e) => {
     e.preventDefault();
     setUpdating(true);
 
     try {
+      await ensureToken();
+
       const payload = {
         title: editingBook.title,
         author: editingBook.author,
@@ -74,7 +104,7 @@ export default function MyBooksPage() {
       const res = await api.patch(`/books/${editingBook._id}`, payload);
 
       if (res.status === 200) {
-        toast.success("Book updated successfully!");
+        toast.success(`"${editingBook.title}" updated successfully!`);
         setBooks((prev) =>
           prev.map((b) =>
             b._id === editingBook._id ? { ...b, ...payload } : b,
@@ -87,6 +117,28 @@ export default function MyBooksPage() {
       toast.error(msg);
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // Handle Delete submission with custom modal
+  const handleConfirmDelete = async () => {
+    if (!deletingBook) return;
+
+    setDeleting(true);
+    try {
+      await ensureToken();
+
+      const res = await api.delete(`/books/${deletingBook._id}`);
+      if (res.status === 200 || res.status === 204) {
+        toast.success(`"${deletingBook.title}" removed successfully!`);
+        setBooks((prev) => prev.filter((b) => b._id !== deletingBook._id));
+        setDeletingBook(null);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to delete the book.";
+      toast.error(msg);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -146,7 +198,7 @@ export default function MyBooksPage() {
           </Link>
         </div>
       ) : (
-        /* Refined Books List Grid */
+        /* Books List Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           {books.map((book) => {
             const copies = Number(
@@ -199,7 +251,7 @@ export default function MyBooksPage() {
                 </div>
 
                 {/* Bottom Stock & Action Bar */}
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm flex-shrink-0">
                       <FaLayerGroup />
@@ -214,13 +266,23 @@ export default function MyBooksPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => setEditingBook(book)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 border border-slate-200 hover:border-indigo-200 text-xs sm:text-sm font-bold shadow-sm transition"
-                  >
-                    <FaEdit className="text-xs" />
-                    <span>Update Details</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingBook(book)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 border border-slate-200 hover:border-indigo-200 text-xs font-bold shadow-sm transition cursor-pointer"
+                    >
+                      <FaEdit className="text-xs" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      onClick={() => setDeletingBook(book)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold shadow-sm transition cursor-pointer"
+                    >
+                      <FaTrashAlt className="text-xs" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -234,7 +296,7 @@ export default function MyBooksPage() {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5 relative my-8">
             <button
               onClick={() => setEditingBook(null)}
-              className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-1"
+              className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
             >
               <FaTimes className="text-lg" />
             </button>
@@ -308,9 +370,7 @@ export default function MyBooksPage() {
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Category
                   </label>
-                  <input
-                    type="text"
-                    required
+                  <select
                     value={editingBook.category}
                     onChange={(e) =>
                       setEditingBook({
@@ -318,8 +378,14 @@ export default function MyBooksPage() {
                         category: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
-                  />
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition cursor-pointer"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -354,24 +420,88 @@ export default function MyBooksPage() {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={editingBook.description || ""}
+                  onChange={(e) =>
+                    setEditingBook({
+                      ...editingBook,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                />
+              </div>
+
               <div className="pt-2 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setEditingBook(null)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updating}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md transition disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md transition disabled:opacity-50 cursor-pointer"
                 >
                   <FaCheckCircle className="text-xs" />
                   <span>{updating ? "Updating..." : "Save Changes"}</span>
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deletingBook && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center relative">
+            <button
+              onClick={() => setDeletingBook(null)}
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+            >
+              <FaTimes className="text-base" />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3">
+              <FaExclamationTriangle />
+            </div>
+
+            <h3 className="text-lg font-black text-slate-900 mb-1">
+              Delete This Book?
+            </h3>
+            <p className="text-xs text-slate-500 mb-6 px-2">
+              Are you sure you want to permanently remove{" "}
+              <span className="font-bold text-slate-800">
+                "{deletingBook.title}"
+              </span>{" "}
+              from the library collection? This action cannot be undone.
+            </p>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDeletingBook(null)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={deleting}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition disabled:opacity-50 cursor-pointer"
+              >
+                {deleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}
