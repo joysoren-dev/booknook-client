@@ -54,6 +54,9 @@ function LoginForm() {
       await signIn.social({
         provider: "google",
         callbackURL: callbackUrl,
+        authParams: {
+          prompt: "select_account",
+        },
       });
     } catch (err) {
       toast.error("Google Sign-In failed.");
