@@ -54,8 +54,7 @@ function LoginForm() {
       await signIn.social({
         provider: "google",
         callbackURL: callbackUrl,
-        prompt: "select_account",
-        queryParams: {
+        authParams: {
           prompt: "select_account",
         },
       });
